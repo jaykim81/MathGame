@@ -112,33 +112,26 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
     100% { transform: translateX(0) scaleX(-1) rotate(0); }
 }
 @keyframes hit {
-    0% { transform: scaleX(1) rotate(0); filter: brightness(1) sepia(0); }
-    20% { transform: scaleX(1) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    40% { transform: scaleX(1) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    60% { transform: scaleX(1) rotate(-10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    80% { transform: scaleX(1) rotate(10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    100% { transform: scaleX(1) rotate(0); filter: brightness(1) sepia(0); }
+    0% { transform: scaleX(1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
+    20% { transform: scaleX(1) translateX(-10px) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
+    40% { transform: scaleX(1) translateX(10px) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
+    60% { transform: scaleX(1) translateX(-10px) rotate(-10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
+    80% { transform: scaleX(1) translateX(10px) rotate(10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
+    100% { transform: scaleX(1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
 }
 @keyframes hit-enemy {
-    0% { transform: scaleX(-1) rotate(0); filter: brightness(1) sepia(0); }
-    20% { transform: scaleX(-1) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    40% { transform: scaleX(-1) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    60% { transform: scaleX(-1) rotate(10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    80% { transform: scaleX(-1) rotate(-10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    100% { transform: scaleX(-1) rotate(0); filter: brightness(1) sepia(0); }
+    0% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
+    20% { transform: scaleX(-1) translateX(10px) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
+    40% { transform: scaleX(-1) translateX(-10px) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
+    60% { transform: scaleX(-1) translateX(10px) rotate(10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
+    80% { transform: scaleX(-1) translateX(-10px) rotate(-10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
+    100% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
 }
 @keyframes dmg-pop {
     0% { opacity: 1; transform: translateY(0) scale(1.5); }
     100% { opacity: 0; transform: translateY(-50px) scale(1); }
 }
-@keyframes screen-shake {
-    0% { transform: translate(0, 0); }
-    20% { transform: translate(-10px, 10px); }
-    40% { transform: translate(10px, -10px); }
-    60% { transform: translate(-10px, -10px); }
-    80% { transform: translate(10px, 10px); }
-    100% { transform: translate(0, 0); }
-}
+/* screen-shake 삭제 */
 
 .anim-atk-player { animation: atk-player 0.6s ease-in-out; }
 .anim-atk-enemy { animation: atk-enemy 0.6s ease-in-out; }

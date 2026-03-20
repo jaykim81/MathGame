@@ -318,7 +318,6 @@ function processAttack(attacker) {
         playerEl.classList.add('anim-atk-player');
         setTimeout(() => {
             enemyEl.classList.add('anim-hit-enemy');
-            gameContainer.classList.add('anim-shake');
             showDamage(enemyDmg, damage);
             Sound.hit();
             enemyHp = Math.max(0, enemyHp - damage);
@@ -327,14 +326,12 @@ function processAttack(attacker) {
         setTimeout(() => {
             playerEl.classList.remove('anim-atk-player');
             enemyEl.classList.remove('anim-hit-enemy');
-            gameContainer.classList.remove('anim-shake');
             checkRoundOver();
         }, 1000);
     } else {
         enemyEl.classList.add('anim-atk-enemy');
         setTimeout(() => {
             playerEl.classList.add('anim-hit');
-            gameContainer.classList.add('anim-shake');
             showDamage(playerDmg, damage);
             Sound.miss();
             playerHp = Math.max(0, playerHp - damage);
@@ -343,7 +340,6 @@ function processAttack(attacker) {
         setTimeout(() => {
             enemyEl.classList.remove('anim-atk-enemy');
             playerEl.classList.remove('anim-hit');
-            gameContainer.classList.remove('anim-shake');
             checkRoundOver();
         }, 1000);
     }
