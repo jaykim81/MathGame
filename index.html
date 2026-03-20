@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바나나 수학 격투! 🍌</title>
+    <meta name="description" content="초등학생을 위한 덧셈 뺄셈 대전 게임">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- 타이틀 스크린 -->
+        <div id="screen-title" class="screen active">
+            <h1>🍌 수학 격투! 🍌</h1>
+            <div class="settings">
+                <label for="level-select">난이도(학년) 선택:</label>
+                <select id="level-select">
+                    <option value="1">1학년 (쉬운 덧셈/뺄셈)</option>
+                    <option value="1.5">1.5학년 (구구단 곱셈)</option>
+                    <option value="2">2학년 (두 자리 수 연산)</option>
+                    <option value="3">3학년 (복잡한 연산)</option>
+                </select>
+            </div>
+            <div class="settings border-box">
+                <label for="enemy-face-upload">적 얼굴 사진 합성 (선택)</label>
+                <input type="file" id="enemy-face-upload" accept="image/*">
+                <div id="enemy-face-preview" class="face-preview"></div>
+            </div>
+            <button id="btn-start" class="btn-primary">게임 시작</button>
+        </div>
+
+        <!-- 게임 플레이 화면 -->
+        <div id="screen-game" class="screen">
+            <div id="global-score-board">SCORE: <span id="score-val">0</span></div>
+            <div class="hud">
+                <div class="player-hud">
+                    <div class="name">나 (Player)</div>
+                    <div class="hp-bar-container"><div id="player-hp-bar" class="hp-bar fill-green"></div></div>
+                </div>
+                <div class="timer-container">
+                    <div id="stage-text">Stage 1/10</div>
+                    <div id="timer-text">20</div>
+                    <div class="timer-bar-wrapper"><div id="timer-bar" class="timer-bar"></div></div>
+                </div>
+                <div class="enemy-hud">
+                    <div class="name" id="enemy-name">적 (Enemy)</div>
+                    <div class="hp-bar-container"><div id="enemy-hp-bar" class="hp-bar fill-red"></div></div>
+                </div>
+            </div>
+
+            <div class="battlefield">
+                <div id="player" class="character player-banana">
+                    <div class="character-body">🍌</div>
+                    <div class="damage-text" id="player-damage"></div>
+                </div>
+                <div id="enemy" class="character enemy-banana">
+                     <div class="character-body">🐵</div>
+                     <div id="enemy-face-overlay" class="face-overlay"></div>
+                     <div class="damage-text" id="enemy-damage"></div>
+                </div>
+            </div>
+
+            <div class="question-board">
+                <h2 id="question-text">1 + 1 = ?</h2>
+            </div>
+            <div class="answers-board">
+                <button class="answer-btn" id="ans-0" data-index="0">
+                    <span class="key-hint">1</span> <span class="val"></span>
+                </button>
+                <button class="answer-btn" id="ans-1" data-index="1">
+                    <span class="key-hint">2</span> <span class="val"></span>
+                </button>
+                <button class="answer-btn" id="ans-2" data-index="2">
+                    <span class="key-hint">3</span> <span class="val"></span>
+                </button>
+                <button class="answer-btn" id="ans-3" data-index="3">
+                    <span class="key-hint">4</span> <span class="val"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="screen-result" class="screen fadeable">
+            <h1 id="result-message">승리!</h1>
+            <p id="result-submessage">적을 물리쳤습니다!</p>
+            <div id="final-score">최종 점수: 0</div>
+            
+            <div id="ranking-input-area" class="border-box" style="margin-top: 20px; width: 80%; max-width: 400px;">
+                <input type="text" id="player-name-input" placeholder="이름을 입력하세요" maxlength="10">
+                <button id="btn-save-rank" class="btn-primary" style="font-size: 1rem; padding: 10px 20px; margin-top: 10px;">랭킹 등록</button>
+            </div>
+
+            <div id="leaderboard-area" style="margin-top: 20px; width: 80%; max-width: 400px;">
+                <h3>🏆 명예의 전당 🏆</h3>
+                <table id="leaderboard-table">
+                    <thead><tr><th>순위</th><th>이름</th><th>점수</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <button id="btn-restart" class="btn-primary">처음으로</button>
+        </div>
+    </div>
+
+    <!-- 스크립트 로드 -->
+    <script src="game.js"></script>
+</body>
+</html>
