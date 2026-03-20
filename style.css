@@ -167,6 +167,15 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 
 #player-name-input { width: 100%; padding: 10px; border-radius: 8px; border: none; font-size: 1rem; text-align: center; }
 
+.btn-small {
+    position: absolute; top: 20px; left: 20px;
+    padding: 8px 15px; font-size: 0.9rem; border-radius: 10px;
+    background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.4);
+    color: #fff; cursor: pointer; z-index: 150; font-weight: bold;
+    transition: all 0.2s;
+}
+.btn-small:hover { background: #e74c3c; border-color: #fff; transform: scale(1.05); }
+
 @keyframes stage-announce {
     0% { transform: scale(0.5); opacity: 0; }
     50% { transform: scale(1.2); opacity: 1; }

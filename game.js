@@ -6,6 +6,7 @@ const gameContainer = document.getElementById('game-container');
 
 const btnStart = document.getElementById('btn-start');
 const btnRestart = document.getElementById('btn-restart');
+const btnGiveup = document.getElementById('btn-giveup');
 const btnSaveRank = document.getElementById('btn-save-rank');
 const levelSelect = document.getElementById('level-select');
 const fileUpload = document.getElementById('enemy-face-upload');
@@ -65,6 +66,12 @@ let uploadedFaceData = null;
 function init() {
     btnStart.addEventListener('click', startGame);
     btnRestart.addEventListener('click', showTitle);
+    btnGiveup.addEventListener('click', () => {
+        if(confirm("정말 처음으로 돌아가시겠습니까?")) {
+            clearInterval(currentTimer);
+            showTitle();
+        }
+    });
     btnSaveRank.addEventListener('click', saveRanking);
     
     fileUpload.addEventListener('change', (e) => {
