@@ -42,6 +42,53 @@ const playerNameInput = document.getElementById('player-name-input');
 const finalScoreText = document.getElementById('final-score');
 const topInfoBar = document.getElementById('top-info-bar');
 
+// Sound Functions
+const Sound = {
+    ctx: null,
+    bgmInterval: null,
+    init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+    play(freq, type, duration, vol, ramp) {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        if (ramp) osc.frequency.exponentialRampToValueAtTime(ramp, this.ctx.currentTime + duration);
+        gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + duration);
+    },
+    startBGM() {
+        if (this.bgmInterval) return;
+        this.init();
+        let i = 0;
+        this.bgmInterval = setInterval(() => {
+            this.play([130, 146, 164, 174][i % 4], 'sine', 0.8, 0.03);
+            i++;
+        }, 1000);
+    },
+    stopBGM() {
+        if (this.bgmInterval) {
+            clearInterval(this.bgmInterval);
+            this.bgmInterval = null;
+        }
+    },
+    win() {
+        this.play(261.63, 'square', 0.1, 0.1);
+        setTimeout(() => this.play(329.63, 'square', 0.1, 0.1), 100);
+        setTimeout(() => this.play(392.00, 'square', 0.3, 0.1), 200);
+    },
+    loss() {
+        this.play(220.00, 'sawtooth', 0.2, 0.1, 110);
+        setTimeout(() => this.play(110.00, 'sawtooth', 0.5, 0.1, 55), 200);
+    },
+    click() {
+        this.play(440, 'sine', 0.05, 0.1);
+    }
+};
+
 // Game Constants & Data
 const MAX_HP = 100;
 const STAGES = [
@@ -383,39 +430,7 @@ function handleAnswer(idx) {
     }
 }
 
-// Sound Functions
-const Sound = {
-    ctx: null,
-    bgmInterval: null,
-    init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
-    play(freq, type, duration, vol, ramp) {
-        this.init();
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        if (ramp) osc.frequency.exponentialRampToValueAtTime(ramp, this.ctx.currentTime + duration);
-        gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(this.ctx.currentTime + duration);
-    },
-    startBGM() {
-        if (this.bgmInterval) return;
-        this.init();
-        let i = 0;
-        this.bgmInterval = setInterval(() => {
-            this.play([130, 146, 164, 174][i % 4], 'sine', 0.8, 0.03);
-            i++;
-        }, 1000);
-    },
-    stopBGM() { clearInterval(this.bgmInterval); this.bgmInterval = null; },
-    hit() { this.play(150, 'sawtooth', 0.1, 0.2, 50); setTimeout(() => this.play(400, 'sine', 0.2, 0.3, 100), 100); },
-    miss() { this.play(100, 'square', 0.3, 0.2, 40); },
-    win() { [261, 329, 392, 523].forEach((f, i) => setTimeout(() => this.play(f, 'triangle', 0.4, 0.2), i * 150)); },
-    loss() { [196, 174, 146, 130].forEach((f, i) => setTimeout(() => this.play(f, 'sine', 0.5, 0.2), i * 200)); }
-};
+
 
 function getRandomSpeech(type) {
     const list = SPEECH[type];
