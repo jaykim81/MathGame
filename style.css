@@ -142,13 +142,13 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; color: var(--primar
     box-shadow: 0 4px 10px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s, transform 0.2s;
     z-index: 100; pointer-events: none;
 }
-#enemy-bubble { transform: translateX(-50%) scaleX(-1); }
+#enemy-bubble { transform: translateX(-50%); }
 .speech-bubble::after {
     content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
     border-width: 10px 10px 0; border-style: solid; border-color: #fff transparent transparent;
 }
 .speech-bubble.active { opacity: 1; transform: translateX(-50%) translateY(-10px); }
-#enemy-bubble.active { transform: translateX(-50%) translateY(-10px) scaleX(-1); }
+#enemy-bubble.active { transform: translateX(-50%) translateY(-10px); }
 
 /* Animations */
 @keyframes anim-atk {

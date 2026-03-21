@@ -403,7 +403,7 @@ function handleTimeout() {
     if (isAnimating) return;
     isAnimating = true;
     answerBtns[correctAnswerIndex].classList.add('correct-anim');
-    processAttack('enemy');
+    processAttack('enemy', true);
 }
 
 function handleAnswer(idx) {
@@ -437,8 +437,14 @@ function getRandomSpeech(type) {
     return list[Math.floor(Math.random() * list.length)];
 }
 
-function processAttack(attacker) {
-    const damage = 20;
+function processAttack(attacker, isTimeout = false) {
+    let damage = 20;
+    if (attacker === 'player') {
+        damage = 15 + remainingTime;
+    } else {
+        damage = isTimeout ? 20 : 10 + remainingTime;
+    }
+    
     Sound.init();
     if (attacker === 'player') {
         playerEl.classList.add('anim-atk-player');
