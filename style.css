@@ -12,11 +12,13 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     overflow: hidden;
     user-select: none;
+    gap: 10px;
 }
 #game-container {
     width: 100%; max-width: 900px;
@@ -32,9 +34,10 @@ body {
 .screen {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
+    align-items: center; justify-content: flex-start; /* Changed from center to allow scrolling from top */
     padding: 20px;
     opacity: 0; z-index: -1; transition: opacity 0.3s;
+    overflow-y: auto;
 }
 .screen.active { opacity: 1; z-index: 10; }
 
@@ -46,8 +49,14 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
     font-size: 1.2rem; padding: 10px; border-radius: 8px; border: none; outline: none;
     font-family: inherit;
 }
-.border-box { border: 2px dashed #95a5a6; padding: 20px; border-radius: 12px; background: rgba(0,0,0,0.2); margin-top: 15px;}
-.face-preview { width: 100px; height: 100px; border-radius: 50%; background-color: #ccc; margin: 10px auto; background-size: cover; background-position: center; border: 3px solid var(--primary); }
+.border-box { border: 2px dashed #95a5a6; padding: 10px 15px; border-radius: 12px; background: rgba(0,0,0,0.2); margin-top: 10px;}
+.face-preview { width: 80px; height: 80px; border-radius: 50%; background-color: #ccc; margin: 10px auto; background-size: 150%; background-position: center 50%; border: 3px solid var(--primary); }
+
+.edit-controls { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+.control-group { margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px;}
+.control-group label { font-size: 0.9rem; margin: 0; min-width: 60px; text-align: left; }
+.control-group input[type="range"] { flex: 1; accent-color: var(--primary); }
+.control-group select { font-size: 0.9rem; padding: 5px; border-radius: 4px; }
 
 .btn-primary {
     background-color: var(--primary); color: #2c3e50; border: none; font-size: 1.5rem; font-weight: bold; padding: 15px 40px; border-radius: 30px; cursor: pointer; transition: transform 0.1s, background 0.2s; box-shadow: 0 6px 0 var(--primary-dark); margin-top: 20px;
@@ -56,7 +65,7 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 .btn-primary:hover { background-color: #f1d34f; }
 
 /* HUD */
-.hud { display: flex; justify-content: space-between; width: 100%; padding: 20px; position: absolute; top: 0; z-index: 5;}
+.hud { display: flex; justify-content: space-between; width: 100%; padding: 5px 20px; position: absolute; top: 10px; z-index: 50;}
 .player-hud, .enemy-hud { width: 35%; text-align: center; }
 .name { font-weight: bold; font-size: 1.2rem; margin-bottom: 5px; text-shadow: 1px 1px 2px #000; }
 .hp-bar-container { width: 100%; height: 25px; background: #000; border: 3px solid #bdc3c7; border-radius: 12px; overflow: hidden; position: relative;}
@@ -73,8 +82,8 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 /* 구 HUD 점수 스타일 삭제 */
 
 /* Battlefield */
-.battlefield { flex: 1; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 50px; width: 100%; margin-top: 80px;}
-.character { position: relative; width: 180px; height: 180px; display: flex; justify-content: center; align-items: flex-end; }
+.battlefield { flex: 1; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 50px; width: 100%; margin-top: 100px; position: relative; z-index: 500;}
+.character { position: relative; width: 180px; height: 180px; display: flex; justify-content: center; align-items: flex-end; z-index: 11;}
 .character-body { width: 180px; height: 180px; font-size: 0; background-size: contain; background-position: center bottom; background-repeat: no-repeat; filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)); transition: transform 0.2s; mix-blend-mode: multiply; }
 .player-banana { transform: scaleX(1); }
 .enemy-banana { transform: scaleX(-1); }
@@ -83,20 +92,51 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 
 /* 구 말풍선 스타일 삭제 */
 
+#top-info-bar {
+    width: 100%; max-width: 900px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 20px; z-index: 200; pointer-events: none;
+}
 #global-score-board {
-    position: absolute; top: 110px; left: 50%; transform: translateX(-50%);
-    font-size: 1.8rem; font-weight: bold; color: var(--primary);
-    text-shadow: 2px 2px 4px #000; z-index: 100;
-    background: rgba(0,0,0,0.7); padding: 5px 25px; border-radius: 25px;
-    border: 3px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    font-size: 1.5rem; font-weight: bold; color: var(--primary);
+    text-shadow: 2px 2px 4px #000;
+    background: rgba(0,0,0,0.7); padding: 5px 20px; border-radius: 20px;
+    border: 2px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    pointer-events: auto;
+}
+#stage-info {
+    font-size: 1.2rem; font-weight: bold; color: var(--primary);
+    text-shadow: 2px 2px 4px #000;
+    background: rgba(0,0,0,0.7); padding: 5px 20px; border-radius: 20px;
+    border: 2px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    pointer-events: auto;
 }
 
 .face-overlay {
-    position: absolute; top: 30px; left: 50%; transform: translateX(-50%) scaleX(-1);
-    width: 80px; height: 80px; border-radius: 50%; background-size: cover; background-position: center; z-index: 10;
+    position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 80px; border-radius: 50%; background-size: 150%; background-position: center 50%; z-index: 10;
+    border: 2px solid rgba(255,255,255,0.5); box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
+.enemy-face-overlay { transform: translateX(-50%) scaleX(-1); }
+#player-face-overlay { transform: translateX(-50%); }
 
-.damage-text { position: absolute; top: -50px; font-size: 4rem; font-weight: bold; color: #e74c3c; text-shadow: 3px 3px 0px #fff; opacity: 0; pointer-events: none; z-index: 20;}
+.damage-text { position: absolute; top: -50px; font-size: 4rem; font-weight: bold; color: #e74c3c; text-shadow: 3px 3px 0px #fff; opacity: 0; pointer-events: none; z-index: 30;}
+
+/* Speech Bubble */
+.speech-bubble {
+    position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+    background: #fff; color: #000; padding: 10px 15px; border-radius: 15px;
+    font-weight: bold; font-size: 1.1rem; white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s, transform 0.2s;
+    z-index: 100; pointer-events: none;
+}
+#enemy-bubble { transform: translateX(-50%) scaleX(-1); }
+.speech-bubble::after {
+    content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+    border-width: 10px 10px 0; border-style: solid; border-color: #fff transparent transparent;
+}
+.speech-bubble.active { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+#enemy-bubble.active { transform: translateX(-50%) translateY(-10px) scaleX(-1); }
 
 /* Animations */
 @keyframes atk-player {
@@ -131,7 +171,16 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
     0% { opacity: 1; transform: translateY(0) scale(1.5); }
     100% { opacity: 0; transform: translateY(-50px) scale(1); }
 }
-/* screen-shake 삭제 */
+
+@keyframes slide-in-left {
+    from { transform: translateX(-300px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-right {
+    from { transform: translateX(300px) scaleX(-1); opacity: 0; }
+    to { transform: translateX(0) scaleX(-1); opacity: 1; }
+}
 
 .anim-atk-player { animation: atk-player 0.6s ease-in-out; }
 .anim-atk-enemy { animation: atk-enemy 0.6s ease-in-out; }
@@ -139,6 +188,8 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 .anim-hit-enemy { animation: hit-enemy 0.5s ease-out; }
 .anim-shake { animation: screen-shake 0.3s ease-out; }
 .anim-dmg { animation: dmg-pop 1s forwards; }
+.anim-slide-left { animation: slide-in-left 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+.anim-slide-right { animation: slide-in-right 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
 /* Question Area */
 .question-board { width: 100%; text-align: center; padding: 20px; background: rgba(0,0,0,0.6); border-top: 5px solid var(--primary); border-bottom: 2px solid #7f8c8d; box-shadow: inset 0 5px 15px rgba(0,0,0,0.5);}
@@ -168,10 +219,11 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 #player-name-input { width: 100%; padding: 10px; border-radius: 8px; border: none; font-size: 1rem; text-align: center; }
 
 .btn-small {
-    position: absolute; bottom: 20px; right: 20px;
-    padding: 8px 15px; font-size: 0.9rem; border-radius: 10px;
-    background: rgba(0,0,0,0.8); border: 2px solid rgba(255,255,255,0.6);
-    color: #fff; cursor: pointer; z-index: 200; font-weight: bold;
+    position: absolute; bottom: 20px; left: 20px;
+    padding: 6px 18px; font-size: 1rem; border-radius: 20px;
+    background: rgba(0,0,0,0.8); border: 3px solid var(--primary);
+    color: var(--primary); cursor: pointer; z-index: 200; font-weight: bold;
+    text-shadow: 1px 1px 2px #000; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     transition: all 0.2s;
 }
 .btn-small:hover { background: #e74c3c; border-color: #fff; transform: scale(1.05); }

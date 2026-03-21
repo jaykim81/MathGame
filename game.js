@@ -11,20 +11,28 @@ const btnSaveRank = document.getElementById('btn-save-rank');
 const levelSelect = document.getElementById('level-select');
 const fileUpload = document.getElementById('enemy-face-upload');
 const facePreview = document.getElementById('enemy-face-preview');
+const faceEditPanel = document.getElementById('face-edit-panel');
+const faceZoom = document.getElementById('face-zoom');
+const faceOffsetX = document.getElementById('face-offset-x');
+const faceOffsetY = document.getElementById('face-offset-y');
+const faceTarget = document.getElementById('face-target');
 const enemyFaceOverlay = document.getElementById('enemy-face-overlay');
+const playerFaceOverlay = document.getElementById('player-face-overlay');
 
 const playerHpBar = document.getElementById('player-hp-bar');
 const enemyHpBar = document.getElementById('enemy-hp-bar');
 const timerText = document.getElementById('timer-text');
 const timerBar = document.getElementById('timer-bar');
 const scoreText = document.getElementById('score-val');
-const stageText = document.getElementById('stage-text');
+const stageNumText = document.getElementById('stage-num-val');
 const enemyNameText = document.getElementById('enemy-name');
 
 const playerEl = document.getElementById('player');
 const enemyEl = document.getElementById('enemy');
 const playerDmg = document.getElementById('player-damage');
 const enemyDmg = document.getElementById('enemy-damage');
+const playerBubble = document.getElementById('player-bubble');
+const enemyBubble = document.getElementById('enemy-bubble');
 
 const questionText = document.getElementById('question-text');
 const answerBtns = document.querySelectorAll('.answer-btn');
@@ -32,24 +40,33 @@ const answerBtns = document.querySelectorAll('.answer-btn');
 const leaderboardTable = document.querySelector('#leaderboard-table tbody');
 const playerNameInput = document.getElementById('player-name-input');
 const finalScoreText = document.getElementById('final-score');
+const topInfoBar = document.getElementById('top-info-bar');
 
 // Game Constants & Data
 const MAX_HP = 100;
 const STAGES = [
-    { name: "심심한 원숭이", emoji: "🐵", hp: 100 },
-    { name: "용감한 강아지", emoji: "🐶", hp: 100 },
-    { name: "영리한 여우", emoji: "🦊", hp: 120 },
-    { name: "배고픈 늑대", emoji: "🐺", hp: 120 },
-    { name: "백수의 왕 사자", emoji: "🦁", hp: 140 },
-    { name: "줄무늬 호랑이", emoji: "🐯", hp: 140 },
-    { name: "괴력 고릴라", emoji: "🦍", hp: 160 },
-    { name: "고대 공룡", emoji: "🦖", hp: 180 },
-    { name: "전설의 용", emoji: "🐉", hp: 200 },
-    { name: "최종 보스 도깨비", emoji: "👹", hp: 300 }
+    { name: "심심한 원숭이", emoji: "🐵", hp: 100, entryMsg: "안녕! 나랑 놀자!" },
+    { name: "용감한 강아지", emoji: "🐶", hp: 100, entryMsg: "멍멍! 준비됐어?" },
+    { name: "영리한 여우", emoji: "🦊", hp: 120, entryMsg: "후후, 좀 어려울걸?" },
+    { name: "배고픈 늑대", emoji: "🐺", hp: 120, entryMsg: "크르르... 배고파!" },
+    { name: "백수의 왕 사자", emoji: "🦁", hp: 140, entryMsg: "내가 바로 왕이다!" },
+    { name: "줄무늬 호랑이", emoji: "🐯", hp: 140, entryMsg: "어흥! 도망갈 수 없다!" },
+    { name: "괴력 고릴라", emoji: "🦍", hp: 160, entryMsg: "우호! 우호호!" },
+    { name: "고대 공룡", emoji: "Rex", emoji: "🦖", hp: 180, entryMsg: "쿠오오오!!" },
+    { name: "전설의 용", emoji: "🐉", hp: 200, entryMsg: "나를 깨운 것이 너냐?" },
+    { name: "최종 보스 도깨비", emoji: "👹", hp: 300, entryMsg: "끝판왕을 상대해봐라!" }
 ];
 
+// Content for Speech Bubbles
+const SPEECH = {
+    playerHit: ["받아라!", "공격!", "하하하 어떠냐?", "정답이다!", "내 주먹을 봐!"],
+    playerDamaged: ["아얏!", "아프다!", "으앙!", "조금 아픈데?", "실수했다!"],
+    enemyHit: ["그것도 못 맞춰?", "바보바보!", "메롱!", "내가 더 빠르지?", "깔깔깔!"],
+    enemyDamaged: ["윽!", "이럴수가!", "기억해두겠다!", "정답이라니!", "별로 안 아파!"]
+};
+
 // Game States
-let currentLevel = 1; // 초등 학년
+let currentLevel = 'add_sub_1'; 
 let currentStage = 1; // 1~10
 let playerHp = MAX_HP;
 let enemyHp = 100;
@@ -81,9 +98,15 @@ function init() {
             reader.onload = (e) => {
                 uploadedFaceData = e.target.result;
                 facePreview.style.backgroundImage = `url(${uploadedFaceData})`;
+                faceEditPanel.style.display = 'block';
+                updateFacePreview();
             };
             reader.readAsDataURL(file);
         }
+    });
+
+    [faceZoom, faceOffsetX, faceOffsetY].forEach(input => {
+        input.addEventListener('input', updateFacePreview);
     });
 
     answerBtns.forEach(btn => {
@@ -93,40 +116,78 @@ function init() {
         });
     });
 
-    window.addEventListener('keydown', (e) => {
-        if(screenGame.classList.contains('active') && !isAnimating) {
-            if(e.key === '1') handleAnswer(0);
-            if(e.key === '2') handleAnswer(1);
-            if(e.key === '3') handleAnswer(2);
-            if(e.key === '4') handleAnswer(3);
+    // Correcting key mapping for 1-4
+    window.onkeydown = (e) => {
+         if(screenGame.classList.contains('active') && !isAnimating) {
+            const idx = ['1','2','3','4'].indexOf(e.key);
+            if(idx !== -1) handleAnswer(idx);
         }
-    });
+    };
 
     showTitle();
+}
+
+function updateFacePreview() {
+    if (!uploadedFaceData) return;
+    const zoom = faceZoom.value;
+    const offX = faceOffsetX.value;
+    const offY = faceOffsetY.value;
+    facePreview.style.backgroundSize = `${zoom}%`;
+    facePreview.style.backgroundPosition = `${offX}% ${offY}%`;
+}
+
+function applyFaceStyle(element) {
+    if (!uploadedFaceData) return;
+    const zoom = faceZoom.value;
+    const offX = faceOffsetX.value;
+    const offY = faceOffsetY.value;
+    element.style.backgroundImage = `url(${uploadedFaceData})`;
+    element.style.backgroundSize = `${zoom}%`;
+    element.style.backgroundPosition = `${offX}% ${offY}%`;
 }
 
 function showTitle() {
     screenTitle.classList.add('active');
     screenGame.classList.remove('active');
     screenResult.classList.remove('active');
+    if (topInfoBar) topInfoBar.style.display = 'none';
     Sound.stopBGM();
 }
 
 function startGame() {
-    currentLevel = parseFloat(levelSelect.value);
+    currentLevel = levelSelect.value;
     currentStage = 1;
     totalScore = 0;
     playerHp = MAX_HP;
     
     updateScoreUI();
-    loadStage(currentStage);
+    if (topInfoBar) topInfoBar.style.display = 'flex';
     
     screenTitle.classList.remove('active');
     screenResult.classList.remove('active');
     screenGame.classList.add('active');
     
     Sound.startBGM();
-    nextTurn();
+
+    // Reset overlays
+    playerFaceOverlay.style.display = 'none';
+    enemyFaceOverlay.style.display = 'none';
+
+    // Apply face if selected
+    if (uploadedFaceData) {
+        const target = faceTarget.value;
+        if (target === 'player') {
+            playerFaceOverlay.style.display = 'block';
+            applyFaceStyle(playerFaceOverlay);
+        }
+    }
+
+    // Player intro animation
+    playerEl.classList.remove('anim-slide-left');
+    void playerEl.offsetWidth;
+    playerEl.classList.add('anim-slide-left');
+    
+    loadStage(currentStage);
 }
 
 function loadStage(stageNum) {
@@ -136,33 +197,39 @@ function loadStage(stageNum) {
     timeLimit = 20 - (stageNum - 1);
     
     enemyNameText.innerText = stageData.name;
-    stageText.innerText = `Stage ${stageNum}/10`;
+    stageNumText.innerText = stageNum;
     
     // 캐릭터 이미지 설정
-    if (uploadedFaceData) {
-        enemyFaceOverlay.style.backgroundImage = `url(${uploadedFaceData})`;
+    const target = uploadedFaceData ? faceTarget.value : null;
+    
+    if (uploadedFaceData && target === 'enemy') {
         enemyFaceOverlay.style.display = 'block';
+        applyFaceStyle(enemyFaceOverlay);
     } else {
         enemyFaceOverlay.style.display = 'none';
-        // 얼굴이 없을 때만 적 이모지/이미지 변경 (여기서는 예시로 원숭이 캐릭터 이미지가 고정되어 있으므로, 텍스트나 필터로 보스 느낌 부여 가능)
-        // 실제로는 enemy.png 대신 stage별 이미지를 로드하거나 이모지를 오버레이할 수 있음.
-        // 여기서는 이모지를 바디 뒤에 살짝 띄워주는 방식으로 처리
         enemyEl.querySelector('.character-body').innerText = stageData.emoji; 
-        // 기존 CSS에서 font-size: 0 이므로 다시 살림 (이미지 대신 이모지 쓸 경우)
-        if (!uploadedFaceData) {
-            enemyEl.querySelector('.character-body').style.fontSize = "8rem";
-            enemyEl.querySelector('.character-body').style.backgroundImage = "none";
-        }
+        enemyEl.querySelector('.character-body').style.fontSize = "8rem";
+        enemyEl.querySelector('.character-body').style.backgroundImage = "none";
     }
     
     if (stageNum === 10) {
-        enemyEl.style.filter = "hue-rotate(180deg) brightness(0.8)"; // 보스 포스
+        enemyEl.style.filter = "hue-rotate(180deg) brightness(0.8)";
     } else {
         enemyEl.style.filter = "none";
     }
 
     updateHpUI();
     announceStage(stageNum);
+
+    // Enemy slide-in animation
+    enemyEl.classList.remove('anim-slide-right');
+    void enemyEl.offsetWidth;
+    enemyEl.classList.add('anim-slide-right');
+
+    setTimeout(() => {
+        showSpeech(enemyBubble, stageData.entryMsg);
+        nextTurn();
+    }, 1000);
 }
 
 function announceStage(num) {
@@ -173,39 +240,49 @@ function announceStage(num) {
     setTimeout(() => banner.remove(), 2000);
 }
 
+function showSpeech(element, text) {
+    element.innerText = text;
+    element.classList.add('active');
+    setTimeout(() => {
+        element.classList.remove('active');
+    }, 2000);
+}
+
 function generateQuestion() {
     let num1, num2, op, answer;
-    if (currentLevel === 1) {
+    
+    if (currentLevel === 'add_sub_1') {
         op = Math.random() < 0.5 ? '+' : '-';
         num1 = Math.floor(Math.random() * 9) + 1;
         num2 = Math.floor(Math.random() * 9) + 1;
         if (op === '-' && num1 < num2) [num1, num2] = [num2, num1];
-    } else if (currentLevel === 1.5) { 
-        // 1.5학년: 구구단 (2~9단)
-        op = '×';
-        num1 = Math.floor(Math.random() * 8) + 2; // 2~9
-        num2 = Math.floor(Math.random() * 9) + 1; // 1~9
-    } else if (currentLevel === 2) { 
-        // 2학년: 두자리수 ± 한자리/두자리수 (100 이하)
+    } else if (currentLevel === 'add_sub_2') {
         op = Math.random() < 0.5 ? '+' : '-';
-        if (op === '+') {
-            num1 = Math.floor(Math.random() * 70) + 10;
-            num2 = Math.floor(Math.random() * 20) + 5;
-        } else {
-            num1 = Math.floor(Math.random() * 50) + 40;
-            num2 = Math.floor(Math.random() * 30) + 10;
-        }
-    } else { 
-        // 3학년: 세자리수 혹은 어려운 두자리수 연산
-        op = Math.random() < 0.5 ? '+' : '-';
-        if (op === '+') {
-            num1 = Math.floor(Math.random() * 500) + 100;
-            num2 = Math.floor(Math.random() * 400) + 100;
-        } else {
-            num1 = Math.floor(Math.random() * 500) + 400;
-            num2 = Math.floor(Math.random() * 300) + 100;
-        }
+        num1 = Math.floor(Math.random() * 80) + 10;
+        num2 = Math.floor(Math.random() * 80) + 10;
         if (op === '-' && num1 < num2) [num1, num2] = [num2, num1];
+        if (op === '+' && num1 + num2 > 100) { num1 = 50; num2 = 30; } // Keep reasonable
+    } else if (currentLevel === 'add_sub_3') {
+        op = Math.random() < 0.5 ? '+' : '-';
+        num1 = Math.floor(Math.random() * 800) + 100;
+        num2 = Math.floor(Math.random() * 800) + 100;
+        if (op === '-' && num1 < num2) [num1, num2] = [num2, num1];
+    } else if (currentLevel.startsWith('mult_')) {
+        op = '×';
+        let level = currentLevel.split('_')[1];
+        if (level === '1') { // 2, 3단
+            num1 = Math.random() < 0.5 ? 2 : 3;
+            num2 = Math.floor(Math.random() * 9) + 1;
+        } else if (level === '2') { // 4, 5, 6단
+            num1 = [4, 5, 6][Math.floor(Math.random() * 3)];
+            num2 = Math.floor(Math.random() * 9) + 1;
+        } else if (level === '3') { // 7, 8, 9단
+            num1 = [7, 8, 9][Math.floor(Math.random() * 3)];
+            num2 = Math.floor(Math.random() * 9) + 1;
+        } else { // 2-9단
+            num1 = Math.floor(Math.random() * 8) + 2;
+            num2 = Math.floor(Math.random() * 9) + 1;
+        }
     }
 
     if (op === '×') {
@@ -216,11 +293,29 @@ function generateQuestion() {
     questionText.innerText = `${num1} ${op} ${num2} = ?`;
 
     let answers = [answer];
+    
+    // Distractor matching logic for add_sub_2 and add_sub_3
+    let matchLastDigitCount = 0;
+    const isHardAddSub = (currentLevel === 'add_sub_2' || currentLevel === 'add_sub_3');
+    const lastDigit = answer % 10;
+
     while(answers.length < 4) {
-        let offset = Math.floor(Math.random() * 5) + 1;
-        let sign = Math.random() < 0.5 ? 1 : -1;
-        let wrong = answer + (offset * sign);
-        if (!answers.includes(wrong) && wrong >= 0) answers.push(wrong);
+        let wrong;
+        if (isHardAddSub && answer >= 10 && matchLastDigitCount < 2) {
+            // Try to match last digit
+            let base = Math.floor(Math.random() * 9) + 1; // 1-9
+            if (currentLevel === 'add_sub_3') base = Math.floor(Math.random() * 90) + 10;
+            wrong = base * 10 + lastDigit;
+            if (wrong !== answer && !answers.includes(wrong)) {
+                answers.push(wrong);
+                matchLastDigitCount++;
+            }
+        } else {
+            let offset = Math.floor(Math.random() * 10) + 1;
+            let sign = Math.random() < 0.5 ? 1 : -1;
+            wrong = answer + (offset * sign);
+            if (!answers.includes(wrong) && wrong >= 0) answers.push(wrong);
+        }
     }
     answers.sort(() => Math.random() - 0.5);
     correctAnswerIndex = answers.indexOf(answer);
@@ -271,8 +366,12 @@ function handleAnswer(idx) {
     timerBar.style.transition = 'none';
 
     if (idx === correctAnswerIndex) {
-        // 점수 계산: (레벨 * 100) + (남은 시간 * 10)
-        const gain = (currentLevel * 100) + (remainingTime * 10);
+        let levelBonus = 1;
+        if (currentLevel.includes('2')) levelBonus = 1.5;
+        if (currentLevel.includes('3')) levelBonus = 2;
+        if (currentLevel.includes('4')) levelBonus = 2.5;
+
+        const gain = Math.floor((levelBonus * 100) + (remainingTime * 10));
         totalScore += gain;
         updateScoreUI();
         answerBtns[idx].classList.add('correct-anim');
@@ -318,13 +417,20 @@ const Sound = {
     loss() { [196, 174, 146, 130].forEach((f, i) => setTimeout(() => this.play(f, 'sine', 0.5, 0.2), i * 200)); }
 };
 
+function getRandomSpeech(type) {
+    const list = SPEECH[type];
+    return list[Math.floor(Math.random() * list.length)];
+}
+
 function processAttack(attacker) {
     const damage = 20;
     Sound.init();
     if (attacker === 'player') {
         playerEl.classList.add('anim-atk-player');
+        showSpeech(playerBubble, getRandomSpeech('playerHit'));
         setTimeout(() => {
             enemyEl.classList.add('anim-hit-enemy');
+            showSpeech(enemyBubble, getRandomSpeech('enemyDamaged'));
             showDamage(enemyDmg, damage);
             Sound.hit();
             enemyHp = Math.max(0, enemyHp - damage);
@@ -337,8 +443,10 @@ function processAttack(attacker) {
         }, 1000);
     } else {
         enemyEl.classList.add('anim-atk-enemy');
+        showSpeech(enemyBubble, getRandomSpeech('enemyHit'));
         setTimeout(() => {
             playerEl.classList.add('anim-hit');
+            showSpeech(playerBubble, getRandomSpeech('playerDamaged'));
             showDamage(playerDmg, damage);
             Sound.miss();
             playerHp = Math.max(0, playerHp - damage);
@@ -375,7 +483,6 @@ function checkRoundOver() {
         if (currentStage < 10) {
             currentStage++;
             loadStage(currentStage);
-            nextTurn();
         } else {
             endGame(true);
         }

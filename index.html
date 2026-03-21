@@ -8,22 +8,56 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="top-info-bar" style="display: none;">
+        <div id="global-score-board">SCORE: <span id="score-val">0</span></div>
+        <div id="stage-info">STAGE <span id="stage-num-val">1</span>/10</div>
+    </div>
     <div id="game-container">
         <!-- 타이틀 스크린 -->
         <div id="screen-title" class="screen active">
             <h1>🍌 수학 격투! 🍌</h1>
             <div class="settings">
-                <label for="level-select">난이도(학년) 선택:</label>
+                <label for="level-select">난이도 선택:</label>
                 <select id="level-select">
-                    <option value="1">1학년 (쉬운 덧셈/뺄셈)</option>
-                    <option value="1.5">1.5학년 (구구단 곱셈)</option>
-                    <option value="2">2학년 (두 자리 수 연산)</option>
-                    <option value="3">3학년 (복잡한 연산)</option>
+                    <optgroup label="덧셈 / 뺄셈">
+                        <option value="add_sub_1">1단계 (한 자리 수)</option>
+                        <option value="add_sub_2">2단계 (두 자리 수)</option>
+                        <option value="add_sub_3">3단계 (세 자리 수)</option>
+                    </optgroup>
+                    <optgroup label="구구단">
+                        <option value="mult_1">1단계 (2, 3단)</option>
+                        <option value="mult_2">2단계 (4, 5, 6단)</option>
+                        <option value="mult_3">3단계 (7, 8, 9단)</option>
+                        <option value="mult_4">4단계 (2-9단 전범위)</option>
+                    </optgroup>
                 </select>
             </div>
             <div class="settings border-box">
-                <label for="enemy-face-upload">적 얼굴 사진 합성 (선택)</label>
+                <label for="enemy-face-upload">📷 캐릭터 얼굴 사진 합성</label>
                 <input type="file" id="enemy-face-upload" accept="image/*">
+                
+                <div class="edit-controls" style="margin-top: 10px; display: none;" id="face-edit-panel">
+                    <div class="control-group">
+                        <label>확대/축소</label>
+                        <input type="range" id="face-zoom" min="50" max="300" value="100">
+                    </div>
+                    <div class="control-group">
+                        <label>좌우 위치</label>
+                        <input type="range" id="face-offset-x" min="0" max="100" value="50">
+                    </div>
+                    <div class="control-group">
+                        <label>상하 위치</label>
+                        <input type="range" id="face-offset-y" min="0" max="100" value="50">
+                    </div>
+                    <div class="control-group">
+                        <label>적용 대상:</label>
+                        <select id="face-target">
+                            <option value="player">나 (Player)</option>
+                            <option value="enemy">적 (Enemy)</option>
+                        </select>
+                    </div>
+                </div>
+                
                 <div id="enemy-face-preview" class="face-preview"></div>
             </div>
             <button id="btn-start" class="btn-primary">게임 시작</button>
@@ -31,14 +65,13 @@
 
         <!-- 게임 플레이 화면 -->
         <div id="screen-game" class="screen">
-            <div id="global-score-board">SCORE: <span id="score-val">0</span></div>
+            
             <div class="hud">
                 <div class="player-hud">
                     <div class="name">나 (Player)</div>
                     <div class="hp-bar-container"><div id="player-hp-bar" class="hp-bar fill-green"></div></div>
                 </div>
                 <div class="timer-container">
-                    <div id="stage-text">Stage 1/10</div>
                     <div id="timer-text">20</div>
                     <div class="timer-bar-wrapper"><div id="timer-bar" class="timer-bar"></div></div>
                 </div>
@@ -51,10 +84,13 @@
 
             <div class="battlefield">
                 <div id="player" class="character player-banana">
+                    <div class="speech-bubble" id="player-bubble"></div>
                     <div class="character-body">🍌</div>
+                    <div id="player-face-overlay" class="face-overlay" style="display: none; transform: translateX(-50%);"></div>
                     <div class="damage-text" id="player-damage"></div>
                 </div>
                 <div id="enemy" class="character enemy-banana">
+                     <div class="speech-bubble" id="enemy-bubble"></div>
                      <div class="character-body">🐵</div>
                      <div id="enemy-face-overlay" class="face-overlay"></div>
                      <div class="damage-text" id="enemy-damage"></div>
