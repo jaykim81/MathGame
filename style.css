@@ -178,9 +178,17 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; color: var(--primar
 }
 .anim-hit-enemy { animation: hit-enemy 0.5s ease-in-out; }
 
-@keyframes dmg-pop {
-    0% { opacity: 1; transform: translateY(0) scale(1.5); }
-    100% { opacity: 0; transform: translateY(-50px) scale(1); }
+#player .anim-dmg { animation: dmg-pop-left 1s forwards; }
+#enemy .anim-dmg { animation: dmg-pop-right 1s forwards; }
+
+@keyframes dmg-pop-left {
+    0% { opacity: 1; transform: translate(0, 0) scale(1.5); }
+    100% { opacity: 0; transform: translate(-60px, -60px) scale(1); }
+}
+
+@keyframes dmg-pop-right {
+    0% { opacity: 1; transform: translate(0, 0) scale(1.5); }
+    100% { opacity: 0; transform: translate(60px, -60px) scale(1); }
 }
 
 @keyframes slide-in-left {
@@ -194,7 +202,6 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; color: var(--primar
 }
 
 .anim-shake { animation: screen-shake 0.3s ease-out; }
-.anim-dmg { animation: dmg-pop 1s forwards; }
 .anim-slide-left { animation: slide-in-left 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 .anim-slide-right { animation: slide-in-right 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
@@ -236,9 +243,9 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; color: var(--primar
 .btn-small:hover { background: #e74c3c; border-color: #fff; transform: scale(1.05); }
 
 @keyframes stage-announce {
-    0% { transform: scale(0.5); opacity: 0; }
-    50% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(1); opacity: 0; }
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
 }
 .stage-banner {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
