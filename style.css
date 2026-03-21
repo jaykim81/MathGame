@@ -65,7 +65,7 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; color: var(--primar
 .btn-primary:hover { background-color: #f1d34f; }
 
 /* HUD */
-.hud { display: flex; justify-content: space-between; width: 100%; padding: 10px 20px; position: absolute; top: 0; left: 0; z-index: 50; box-sizing: border-box; }
+.hud { display: flex; justify-content: space-between; width: 100%; z-index: 50; flex-shrink: 0; padding: 0 5%; gap: 10px;}
 .player-hud, .enemy-hud { width: 35%; text-align: center; }
 .name { font-weight: bold; font-size: 1.2rem; margin-bottom: 5px; text-shadow: 1px 1px 2px #000; }
 .hp-bar-container { width: 100%; height: clamp(15px, 3vh, 25px); background: #000; border: 3px solid #bdc3c7; border-radius: 12px; overflow: hidden; position: relative;}
@@ -82,8 +82,8 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; color: var(--primar
 /* 구 HUD 점수 스타일 삭제 */
 
 /* Battlefield */
-.battlefield { flex: 1; display: flex; justify-content: space-around; align-items: center; width: 100%; position: relative; z-index: 500;}
-.character { position: relative; width: 35vw; max-width: 180px; aspect-ratio: 1/1; display: flex; justify-content: center; align-items: flex-end; z-index: 11;}
+.battlefield { flex: 1; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 2vh; width: 100%; position: relative; z-index: 500;}
+.character { position: relative; width: 35vw; height: 35vw; max-width: 180px; max-height: 180px; display: flex; justify-content: center; align-items: flex-end; z-index: 11;}
 .character-body { 
     width: 100%; height: 100%; font-size: 0; background-size: contain; 
     background-position: center bottom; background-repeat: no-repeat; 
@@ -203,12 +203,13 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; color: var(--primar
 .anim-slide-right { animation: slide-in-right 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
 /* Question Area */
-#question-text { font-size: clamp(2rem, 6vw, 3.5rem); font-weight: bold; letter-spacing: 2px; color: #fff; text-shadow: 3px 3px 0px #000; margin-bottom: 2%; text-align: center;}
+.question-board { width: 100%; text-align: center; padding: clamp(10px, 2vh, 20px); background: rgba(0,0,0,0.6); border-top: 5px solid var(--primary); border-bottom: 2px solid #7f8c8d; box-shadow: inset 0 5px 15px rgba(0,0,0,0.5);}
+#question-text { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: bold; letter-spacing: 2px; color: #fff; text-shadow: 3px 3px 0px #000; margin: 0; padding: 0;}
 
 /* Answers */
-.answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; max-width: 500px; margin-bottom: 10px; }
+.answers-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: clamp(10px, 2vh, 20px); background: rgba(0,0,0,0.5); width: 100%; max-width: 500px; border-radius: 15px; margin-bottom: 5px; flex-shrink: 0;}
 .answer-btn {
-    background: #ecf0f1; border: 3px solid #bdc3c7; font-size: clamp(1.2rem, 4vw, 2.5rem); padding: 5px; height: clamp(60px, 15vh, 100px); border-radius: 12px; cursor: pointer; transition: all 0.1s; position: relative; font-weight: bold; color: #2c3e50; box-shadow: 0 8px 0 #95a5a6;
+    background: #ecf0f1; border: 3px solid #bdc3c7; font-size: clamp(1.5rem, 6vw, 2.5rem); padding: 5px; height: clamp(60px, 12vh, 100px); border-radius: 12px; cursor: pointer; transition: all 0.1s; position: relative; font-weight: bold; color: #2c3e50; box-shadow: 0 6px 0 #95a5a6;
     display: flex; justify-content: center; align-items: center; font-family: inherit;
 }
 .answer-btn:active { transform: translateY(6px); box-shadow: none; }
