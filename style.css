@@ -15,14 +15,14 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh;
     padding-top: 80px;
     user-select: none;
     gap: 10px;
 }
 #game-container {
     width: 100%; max-width: 900px;
-    height: 100%; max-height: 600px;
+    flex: 1; max-height: 600px;
     background: #34495e;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     border-radius: 12px;
