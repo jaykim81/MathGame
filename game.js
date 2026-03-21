@@ -429,6 +429,8 @@ function processAttack(attacker) {
         playerEl.classList.add('anim-atk-player');
         showSpeech(playerBubble, getRandomSpeech('playerHit'));
         setTimeout(() => {
+            enemyEl.classList.remove('anim-hit-enemy');
+            void enemyEl.offsetWidth;
             enemyEl.classList.add('anim-hit-enemy');
             showSpeech(enemyBubble, getRandomSpeech('enemyDamaged'));
             showDamage(enemyDmg, damage);
@@ -445,6 +447,8 @@ function processAttack(attacker) {
         enemyEl.classList.add('anim-atk-enemy');
         showSpeech(enemyBubble, getRandomSpeech('enemyHit'));
         setTimeout(() => {
+            playerEl.classList.remove('anim-hit');
+            void playerEl.offsetWidth;
             playerEl.classList.add('anim-hit');
             showSpeech(playerBubble, getRandomSpeech('playerDamaged'));
             showDamage(playerDmg, damage);

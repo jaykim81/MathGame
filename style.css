@@ -98,12 +98,15 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 /* 구 말풍선 스타일 삭제 */
 
 #top-info-bar {
-    width: 100%; max-width: 900px;
+    position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 600px;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 20px; z-index: 200; pointer-events: none;
-    gap: 10px;
+    padding: 10px 20px; z-index: 1000;
+    gap: 10px; background: rgba(0,0,0,0.8);
+    border-bottom: 2px solid var(--primary);
+    border-radius: 0 0 15px 15px;
 }
-#btn-giveup.btn-small { padding: 4px 8px; font-size: 0.8rem; background: #e74c3c; line-height: 1; min-height: unset;}
+#btn-giveup.btn-small { padding: 6px 12px; font-size: 0.9rem; background: #e74c3c; line-height: 1; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.5);}
 #global-score-board {
     font-size: 1.5rem; font-weight: bold; color: var(--primary);
     text-shadow: 2px 2px 4px #000;
