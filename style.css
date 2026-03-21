@@ -84,7 +84,12 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 /* Battlefield */
 .battlefield { flex: 1; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 50px; width: 100%; margin-top: 100px; position: relative; z-index: 500;}
 .character { position: relative; width: 180px; height: 180px; display: flex; justify-content: center; align-items: flex-end; z-index: 11;}
-.character-body { width: 180px; height: 180px; font-size: 0; background-size: contain; background-position: center bottom; background-repeat: no-repeat; filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)); transition: transform 0.2s; mix-blend-mode: multiply; }
+.character-body { 
+    width: 180px; height: 180px; font-size: 0; background-size: contain; 
+    background-position: center bottom; background-repeat: no-repeat; 
+    filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.1) brightness(1.05); 
+    transition: transform 0.2s; mix-blend-mode: multiply; 
+}
 .player-banana { transform: scaleX(1); }
 .enemy-banana { transform: scaleX(-1); }
 .player-banana .character-body { background-image: url('player.png'); }
@@ -96,7 +101,9 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
     width: 100%; max-width: 900px;
     display: flex; justify-content: space-between; align-items: center;
     padding: 10px 20px; z-index: 200; pointer-events: none;
+    gap: 10px;
 }
+#btn-giveup.btn-small { padding: 4px 8px; font-size: 0.8rem; background: #e74c3c; line-height: 1; min-height: unset;}
 #global-score-board {
     font-size: 1.5rem; font-weight: bold; color: var(--primary);
     text-shadow: 2px 2px 4px #000;
@@ -152,20 +159,22 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
     100% { transform: translateX(0) scaleX(-1) rotate(0); }
 }
 @keyframes hit {
-    0% { transform: scaleX(1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
-    20% { transform: scaleX(1) translateX(-10px) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    40% { transform: scaleX(1) translateX(10px) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    60% { transform: scaleX(1) translateX(-10px) rotate(-10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    80% { transform: scaleX(1) translateX(10px) rotate(10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    100% { transform: scaleX(1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
+    0% { transform: scaleX(1) translateX(0) rotate(0); filter: brightness(1) sepia(0) saturate(1); }
+    10% { transform: scaleX(1) translateX(-20px) rotate(-20deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
+    30% { transform: scaleX(1) translateX(20px) rotate(20deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
+    50% { transform: scaleX(1) translateX(-20px) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
+    70% { transform: scaleX(1) translateX(20px) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
+    90% { transform: scaleX(1) translateX(-10px) rotate(-10deg); filter: brightness(1.2) sepia(0.5); }
+    100% { transform: scaleX(1) translateX(0) rotate(0); filter: brightness(1) sepia(0) saturate(1); }
 }
 @keyframes hit-enemy {
-    0% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
-    20% { transform: scaleX(-1) translateX(10px) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    40% { transform: scaleX(-1) translateX(-10px) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    60% { transform: scaleX(-1) translateX(10px) rotate(10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    80% { transform: scaleX(-1) translateX(-10px) rotate(-10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
-    100% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
+    0% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0) saturate(1); }
+    10% { transform: scaleX(-1) translateX(20px) rotate(20deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
+    30% { transform: scaleX(-1) translateX(-20px) rotate(-20deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
+    50% { transform: scaleX(-1) translateX(20px) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
+    70% { transform: scaleX(-1) translateX(-20px) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
+    90% { transform: scaleX(-1) translateX(10px) rotate(10deg); filter: brightness(1.2) sepia(0.5); }
+    100% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0) saturate(1); }
 }
 .anim-hit { animation: hit 0.5s ease-in-out; }
 .anim-hit-enemy { animation: hit-enemy 0.5s ease-in-out; }
