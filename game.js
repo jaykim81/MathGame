@@ -41,6 +41,7 @@ const leaderboardTable = document.querySelector('#leaderboard-table tbody');
 const playerNameInput = document.getElementById('player-name-input');
 const finalScoreText = document.getElementById('final-score');
 const topInfoBar = document.getElementById('top-info-bar');
+const bottomBar = document.getElementById('bottom-bar');
 
 // Sound Functions
 const Sound = {
@@ -198,6 +199,7 @@ function showTitle() {
     screenGame.classList.remove('active');
     screenResult.classList.remove('active');
     if (topInfoBar) topInfoBar.style.display = 'none';
+    if (bottomBar) bottomBar.style.display = 'none';
     Sound.stopBGM();
 }
 
@@ -209,6 +211,7 @@ function startGame() {
     
     updateScoreUI();
     if (topInfoBar) topInfoBar.style.display = 'flex';
+    if (bottomBar) bottomBar.style.display = 'block';
     
     screenTitle.classList.remove('active');
     screenResult.classList.remove('active');
@@ -444,9 +447,9 @@ function processAttack(attacker) {
         playerEl.classList.add('anim-atk-player');
         showSpeech(playerBubble, getRandomSpeech('playerHit'));
         setTimeout(() => {
-            enemyEl.classList.remove('anim-hit-enemy');
+            enemyEl.classList.remove('anim-damage');
             void enemyEl.offsetWidth;
-            enemyEl.classList.add('anim-hit-enemy');
+            enemyEl.classList.add('anim-damage');
             showSpeech(enemyBubble, getRandomSpeech('enemyDamaged'));
             showDamage(enemyDmg, damage);
             Sound.hit();
@@ -455,16 +458,16 @@ function processAttack(attacker) {
         }, 300);
         setTimeout(() => {
             playerEl.classList.remove('anim-atk-player');
-            enemyEl.classList.remove('anim-hit-enemy');
+            enemyEl.classList.remove('anim-damage');
             checkRoundOver();
         }, 1000);
     } else {
         enemyEl.classList.add('anim-atk-enemy');
         showSpeech(enemyBubble, getRandomSpeech('enemyHit'));
         setTimeout(() => {
-            playerEl.classList.remove('anim-hit');
+            playerEl.classList.remove('anim-damage');
             void playerEl.offsetWidth;
-            playerEl.classList.add('anim-hit');
+            playerEl.classList.add('anim-damage');
             showSpeech(playerBubble, getRandomSpeech('playerDamaged'));
             showDamage(playerDmg, damage);
             Sound.miss();
@@ -473,7 +476,7 @@ function processAttack(attacker) {
         }, 300);
         setTimeout(() => {
             enemyEl.classList.remove('anim-atk-enemy');
-            playerEl.classList.remove('anim-hit');
+            playerEl.classList.remove('anim-damage');
             checkRoundOver();
         }, 1000);
     }

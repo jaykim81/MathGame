@@ -88,10 +88,12 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
     width: 180px; height: 180px; font-size: 0; background-size: contain; 
     background-position: center bottom; background-repeat: no-repeat; 
     filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.1) brightness(1.05); 
-    transition: transform 0.2s; mix-blend-mode: multiply; 
+    mix-blend-mode: multiply; 
+    --base-x: 0px;
+    transform: translateX(var(--base-x)) scaleX(var(--base-scale));
 }
-.player-banana { transform: scaleX(1); }
-.enemy-banana { transform: scaleX(-1); }
+.player-banana { --base-scale: 1; }
+.enemy-banana { --base-scale: -1; }
 .player-banana .character-body { background-image: url('player.png'); }
 .enemy-banana .character-body { background-image: url('enemy.png'); }
 
@@ -123,14 +125,13 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 }
 
 .face-overlay {
-    position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+    position: absolute; top: 30px; left: 50%;
     width: 80px; height: 80px; border-radius: 50%; background-size: 150%; background-position: center 50%; z-index: 10;
     border: 2px solid rgba(255,255,255,0.5); box-shadow: 0 0 10px rgba(0,0,0,0.5);
     mix-blend-mode: multiply;
+    --base-x: -50%;
+    transform: translateX(var(--base-x)) scaleX(var(--base-scale));
 }
-.enemy-face-overlay { transform: translateX(-50%) scaleX(-1); }
-#player-face-overlay { transform: translateX(-50%); }
-
 .damage-text { position: absolute; top: -50px; font-size: 4rem; font-weight: bold; color: #e74c3c; text-shadow: 3px 3px 0px #fff; opacity: 0; pointer-events: none; z-index: 30;}
 
 /* Speech Bubble */
@@ -150,37 +151,31 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
 #enemy-bubble.active { transform: translateX(-50%) translateY(-10px) scaleX(-1); }
 
 /* Animations */
-@keyframes atk-player {
-    0% { transform: translateX(0) scaleX(1) rotate(0); }
-    30% { transform: translateX(-20px) scaleX(1) rotate(-10deg); } /* Windup */
-    50% { transform: translateX(150px) scaleX(1) rotate(20deg); } /* Strike */
-    100% { transform: translateX(0) scaleX(1) rotate(0); }
+@keyframes anim-atk {
+    0% { transform: translateX(calc(var(--base-x) + 0px)) scaleX(var(--base-scale)) rotate(0deg); }
+    30% { transform: translateX(calc(var(--base-x) - 20px * var(--base-scale))) scaleX(var(--base-scale)) rotate(calc(-10deg * var(--base-scale))); }
+    50% { transform: translateX(calc(var(--base-x) + 100px * var(--base-scale))) scaleX(var(--base-scale)) rotate(calc(20deg * var(--base-scale))); }
+    100% { transform: translateX(calc(var(--base-x) + 0px)) scaleX(var(--base-scale)) rotate(0deg); }
 }
-@keyframes atk-enemy {
-    0% { transform: translateX(0) scaleX(-1) rotate(0); }
-    30% { transform: translateX(20px) scaleX(-1) rotate(10deg); }
-    50% { transform: translateX(-150px) scaleX(-1) rotate(-20deg); }
-    100% { transform: translateX(0) scaleX(-1) rotate(0); }
+
+@keyframes anim-damage {
+    0% { transform: translateX(calc(var(--base-x) + 0px)) scaleX(var(--base-scale)) rotate(0deg); filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.1) brightness(1.05); }
+    15% { transform: translateX(calc(var(--base-x) - 15px)) scaleX(var(--base-scale)) rotate(-15deg); filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.5) brightness(1) sepia(1) hue-rotate(-50deg) saturate(5); }
+    30% { transform: translateX(calc(var(--base-x) + 15px)) scaleX(var(--base-scale)) rotate(15deg); filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.5) brightness(1) sepia(1) hue-rotate(-50deg) saturate(5); }
+    45% { transform: translateX(calc(var(--base-x) - 15px)) scaleX(var(--base-scale)) rotate(-10deg); filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.5) brightness(1) sepia(1) hue-rotate(-50deg) saturate(5); }
+    60% { transform: translateX(calc(var(--base-x) + 15px)) scaleX(var(--base-scale)) rotate(10deg); filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.5) brightness(1) sepia(1) hue-rotate(-50deg) saturate(5); }
+    75% { transform: translateX(calc(var(--base-x) - 10px)) scaleX(var(--base-scale)) rotate(-5deg); filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.2) brightness(1.05) sepia(0.5) saturate(2); }
+    100% { transform: translateX(calc(var(--base-x) + 0px)) scaleX(var(--base-scale)) rotate(0deg); filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5)) contrast(1.1) brightness(1.05); }
 }
-@keyframes hit {
-    0% { transform: scaleX(1) translateX(0) rotate(0); filter: brightness(1) sepia(0) saturate(1); }
-    10% { transform: scaleX(1) translateX(-20px) rotate(-20deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
-    30% { transform: scaleX(1) translateX(20px) rotate(20deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
-    50% { transform: scaleX(1) translateX(-20px) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
-    70% { transform: scaleX(1) translateX(20px) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
-    90% { transform: scaleX(1) translateX(-10px) rotate(-10deg); filter: brightness(1.2) sepia(0.5); }
-    100% { transform: scaleX(1) translateX(0) rotate(0); filter: brightness(1) sepia(0) saturate(1); }
+
+.anim-atk-player .character-body, .anim-atk-player .face-overlay,
+.anim-atk-enemy .character-body, .anim-atk-enemy .face-overlay {
+    animation: anim-atk 0.4s ease-in-out forwards;
 }
-@keyframes hit-enemy {
-    0% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0) saturate(1); }
-    10% { transform: scaleX(-1) translateX(20px) rotate(20deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
-    30% { transform: scaleX(-1) translateX(-20px) rotate(-20deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
-    50% { transform: scaleX(-1) translateX(20px) rotate(15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
-    70% { transform: scaleX(-1) translateX(-20px) rotate(-15deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(10); }
-    90% { transform: scaleX(-1) translateX(10px) rotate(10deg); filter: brightness(1.2) sepia(0.5); }
-    100% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0) saturate(1); }
+
+.anim-damage .character-body, .anim-damage .face-overlay {
+    animation: anim-damage 0.5s ease-in-out forwards;
 }
-.anim-hit { animation: hit 0.5s ease-in-out; }
 .anim-hit-enemy { animation: hit-enemy 0.5s ease-in-out; }
 
 @keyframes dmg-pop {
