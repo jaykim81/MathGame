@@ -7,6 +7,7 @@ const gameContainer = document.getElementById('game-container');
 const btnStart = document.getElementById('btn-start');
 const btnRestart = document.getElementById('btn-restart');
 const btnSaveRank = document.getElementById('btn-save-rank');
+const btnGiveup = document.getElementById('btn-giveup');
 const levelSelect = document.getElementById('level-select');
 const fileUpload = document.getElementById('enemy-face-upload');
 const facePreview = document.getElementById('enemy-face-preview');
@@ -131,12 +132,19 @@ let remainingTime = timeLimit;
 let correctAnswerIndex = -1;
 let isAnimating = false;
 let uploadedFaceData = null;
+let criticalCombo = 0;
 
 // Initialize
 function init() {
     btnStart.addEventListener('click', startGame);
     btnRestart.addEventListener('click', showTitle);
     btnSaveRank.addEventListener('click', saveRanking);
+    if (btnGiveup) {
+        btnGiveup.addEventListener('click', () => {
+            clearInterval(currentTimer);
+            showTitle();
+        });
+    }
     
     fileUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -206,6 +214,7 @@ function startGame() {
     currentStage = 1;
     totalScore = 0;
     playerHp = MAX_HP;
+    criticalCombo = 0;
     
     updateScoreUI();
     if (topInfoBar) topInfoBar.style.display = 'flex';
@@ -241,7 +250,7 @@ function loadStage(stageNum) {
     const stageData = STAGES[stageNum - 1];
     enemyMaxHp = stageData.hp;
     enemyHp = enemyMaxHp;
-    timeLimit = 20 - (stageNum - 1);
+    timeLimit = 17 - (stageNum - 1);
     
     enemyNameText.innerText = stageData.name;
     stageNumText.innerText = stageNum;
@@ -439,16 +448,44 @@ function getRandomSpeech(type) {
 
 function processAttack(attacker, isTimeout = false) {
     let damage = 20;
+    let isCritical = false;
+    let usedBomb = false;
+    
     if (attacker === 'player') {
-        damage = 15 + remainingTime;
+        const timeTaken = timeLimit - remainingTime;
+        if (timeTaken <= 3) {
+            isCritical = true;
+            criticalCombo++;
+            damage = 20 + Math.floor(Math.random() * 10) + 1;
+            if (criticalCombo >= 3) {
+                usedBomb = true;
+                damage += 5;
+            }
+        } else {
+            criticalCombo = 0;
+            damage = 15 + remainingTime;
+        }
     } else {
+        criticalCombo = 0;
         damage = isTimeout ? 20 : 10 + remainingTime;
+        damage += currentStage; // 스테이지값 추가 데미지
     }
     
     Sound.init();
     if (attacker === 'player') {
         playerEl.classList.add('anim-atk-player');
         showSpeech(playerBubble, getRandomSpeech('playerHit'));
+        
+        let delay = 300;
+        
+        if (isCritical) {
+            showCriticalText(criticalCombo);
+            if (usedBomb) {
+                throwBomb();
+                delay = 600;
+            }
+        }
+        
         setTimeout(() => {
             enemyEl.classList.remove('anim-damage');
             void enemyEl.offsetWidth;
@@ -458,12 +495,12 @@ function processAttack(attacker, isTimeout = false) {
             Sound.hit();
             enemyHp = Math.max(0, enemyHp - damage);
             updateHpUI();
-        }, 300);
+        }, delay);
         setTimeout(() => {
             playerEl.classList.remove('anim-atk-player');
             enemyEl.classList.remove('anim-damage');
             checkRoundOver();
-        }, 1000);
+        }, delay + 700);
     } else {
         enemyEl.classList.add('anim-atk-enemy');
         showSpeech(enemyBubble, getRandomSpeech('enemyHit'));
@@ -483,6 +520,42 @@ function processAttack(attacker, isTimeout = false) {
             checkRoundOver();
         }, 1000);
     }
+}
+
+function showCriticalText(combo) {
+    const critEl = document.createElement('div');
+    critEl.className = 'critical-text anim-critical';
+    if (combo >= 2) {
+        critEl.innerText = `Critical ${combo} Combo!`;
+        critEl.style.color = '#ff9f43';
+        critEl.style.fontSize = '3rem';
+    } else {
+        critEl.innerText = 'Critical Damage!';
+    }
+    playerEl.appendChild(critEl);
+    setTimeout(() => critEl.remove(), 1000);
+}
+
+function throwBomb() {
+    const bomb = document.createElement('div');
+    bomb.innerText = '💣';
+    bomb.className = 'bomb-element anim-bomb';
+    playerEl.appendChild(bomb);
+    
+    setTimeout(() => {
+        const explosion = document.createElement('div');
+        explosion.innerText = '💥';
+        explosion.style.position = 'absolute';
+        explosion.style.fontSize = '8rem';
+        explosion.style.zIndex = '100';
+        explosion.style.left = '50%';
+        explosion.style.top = '10%';
+        explosion.style.transform = 'translate(-50%, -50%)';
+        enemyEl.appendChild(explosion);
+        
+        setTimeout(() => explosion.remove(), 300);
+        bomb.remove();
+    }, 600);
 }
 
 function showDamage(element, amt) {
