@@ -6,7 +6,6 @@ const gameContainer = document.getElementById('game-container');
 
 const btnStart = document.getElementById('btn-start');
 const btnRestart = document.getElementById('btn-restart');
-const btnGiveup = document.getElementById('btn-giveup');
 const btnSaveRank = document.getElementById('btn-save-rank');
 const levelSelect = document.getElementById('level-select');
 const fileUpload = document.getElementById('enemy-face-upload');
@@ -41,7 +40,6 @@ const leaderboardTable = document.querySelector('#leaderboard-table tbody');
 const playerNameInput = document.getElementById('player-name-input');
 const finalScoreText = document.getElementById('final-score');
 const topInfoBar = document.getElementById('top-info-bar');
-const bottomBar = document.getElementById('bottom-bar');
 
 // Sound Functions
 const Sound = {
@@ -87,6 +85,13 @@ const Sound = {
     },
     click() {
         this.play(440, 'sine', 0.05, 0.1);
+    },
+    hit() {
+        this.play(150, 'sawtooth', 0.1, 0.2, 50);
+        setTimeout(() => this.play(400, 'sine', 0.2, 0.3, 100), 100);
+    },
+    miss() {
+        this.play(100, 'square', 0.3, 0.2, 40);
     }
 };
 
@@ -131,12 +136,6 @@ let uploadedFaceData = null;
 function init() {
     btnStart.addEventListener('click', startGame);
     btnRestart.addEventListener('click', showTitle);
-    btnGiveup.addEventListener('click', () => {
-        if(confirm("정말 처음으로 돌아가시겠습니까?")) {
-            clearInterval(currentTimer);
-            showTitle();
-        }
-    });
     btnSaveRank.addEventListener('click', saveRanking);
     
     fileUpload.addEventListener('change', (e) => {
@@ -199,7 +198,6 @@ function showTitle() {
     screenGame.classList.remove('active');
     screenResult.classList.remove('active');
     if (topInfoBar) topInfoBar.style.display = 'none';
-    if (bottomBar) bottomBar.style.display = 'none';
     Sound.stopBGM();
 }
 
@@ -211,7 +209,6 @@ function startGame() {
     
     updateScoreUI();
     if (topInfoBar) topInfoBar.style.display = 'flex';
-    if (bottomBar) bottomBar.style.display = 'block';
     
     screenTitle.classList.remove('active');
     screenResult.classList.remove('active');
