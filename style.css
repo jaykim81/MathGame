@@ -167,6 +167,9 @@ h1 { font-size: 3rem; margin-bottom: 2rem; color: var(--primary); text-shadow: 2
     80% { transform: scaleX(-1) translateX(-10px) rotate(-10deg); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); }
     100% { transform: scaleX(-1) translateX(0) rotate(0); filter: brightness(1) sepia(0); }
 }
+.anim-hit { animation: hit 0.5s ease-in-out; }
+.anim-hit-enemy { animation: hit-enemy 0.5s ease-in-out; }
+
 @keyframes dmg-pop {
     0% { opacity: 1; transform: translateY(0) scale(1.5); }
     100% { opacity: 0; transform: translateY(-50px) scale(1); }
